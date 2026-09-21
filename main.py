@@ -4,10 +4,11 @@ import requests
 
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
+from textwrap import dedent
 
 
 # ============================================================
-# 기본 설정
+# 1. 페이지 기본 설정
 # ============================================================
 
 st.set_page_config(
@@ -19,91 +20,104 @@ st.set_page_config(
 
 
 # ============================================================
-# 색상
+# 2. 색상 설정
 # ============================================================
 
 NAVY = "#14213D"
 BLACK = "#0A0A0A"
 WHITE = "#FFFFFF"
-GRAY = "#A7A7A7"
-LIGHT_GRAY = "#F4F5F7"
+GRAY = "#8A8F98"
 
 
 # ============================================================
-# CSS
+# 3. HTML을 안전하게 출력하는 함수
 # ============================================================
-# Streamlit 기본 디자인을 조금 더 깔끔한 대시보드 형태로 변경합니다.
+# 여러 줄의 HTML을 작성할 때 들여쓰기 때문에
+# Streamlit이 HTML을 코드 블록으로 인식하는 것을 방지합니다.
+
+def render_html(html):
+    st.markdown(
+        dedent(html).strip(),
+        unsafe_allow_html=True
+    )
+
+
+# ============================================================
+# 4. CSS
+# ============================================================
 
 st.markdown(
     f"""
     <style>
 
-    /* 전체 페이지 */
     .stApp {{
         background-color: {WHITE};
         color: {BLACK};
     }}
 
-    /* 상단 여백 */
     .block-container {{
         padding-top: 2.5rem;
         padding-bottom: 4rem;
         max-width: 1400px;
     }}
 
-    /* 기본 텍스트 */
     html, body, [class*="css"] {{
         font-family: "Pretendard", "Noto Sans KR", sans-serif;
     }}
 
-    /* 제목 */
+    /* 메인 제목 */
+
     .main-title {{
         font-size: 3.2rem;
         font-weight: 800;
+        line-height: 0.95;
         letter-spacing: -0.06em;
         color: {BLACK};
-        margin-bottom: 0.2rem;
+        margin-bottom: 0.5rem;
     }}
 
     .sub-title {{
-        font-size: 1rem;
+        font-size: 0.9rem;
         color: {GRAY};
+        letter-spacing: 0.04em;
         margin-bottom: 2.5rem;
     }}
 
-    /* 네이비 라인 */
     .navy-line {{
         height: 4px;
         width: 55px;
         background-color: {NAVY};
-        margin: 12px 0 20px 0;
+        margin: 15px 0 20px 0;
         border-radius: 10px;
     }}
 
     /* 섹션 제목 */
+
     .section-title {{
         font-size: 1.45rem;
-        font-weight: 750;
-        letter-spacing: -0.03em;
+        font-weight: 800;
+        letter-spacing: -0.04em;
         color: {BLACK};
         margin-top: 1.5rem;
         margin-bottom: 1rem;
     }}
 
     /* KPI 카드 */
+
     .kpi-card {{
-        background: {WHITE};
+        background: #FFFFFF;
         border: 1px solid #E5E7EB;
         border-radius: 18px;
         padding: 22px 24px;
         min-height: 135px;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.035);
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
     }}
 
     .kpi-label {{
-        font-size: 0.82rem;
+        font-size: 0.75rem;
         color: {GRAY};
-        font-weight: 600;
+        font-weight: 700;
+        letter-spacing: 0.05em;
         margin-bottom: 10px;
     }}
 
@@ -120,29 +134,8 @@ st.markdown(
         margin-top: 8px;
     }}
 
-    /* AI 분석 카드 */
-    .analysis-card {{
-        background: #F7F8FA;
-        border-left: 5px solid {NAVY};
-        border-radius: 0 16px 16px 0;
-        padding: 22px 25px;
-        margin: 10px 0;
-    }}
+    /* 1위 영화 Hero 카드 */
 
-    .analysis-title {{
-        color: {NAVY};
-        font-weight: 800;
-        font-size: 0.92rem;
-        margin-bottom: 7px;
-    }}
-
-    .analysis-text {{
-        color: #252525;
-        font-size: 0.95rem;
-        line-height: 1.65;
-    }}
-
-    /* 1위 영화 카드 */
     .hero-card {{
         background: {BLACK};
         color: {WHITE};
@@ -152,51 +145,69 @@ st.markdown(
     }}
 
     .hero-rank {{
-        color: #AEB8C8;
-        font-size: 0.9rem;
+        color: #AEB5C1;
+        font-size: 0.78rem;
         font-weight: 700;
         letter-spacing: 0.12em;
     }}
 
     .hero-movie {{
         color: {WHITE};
-        font-size: 2.3rem;
+        font-size: 2.4rem;
         font-weight: 850;
-        letter-spacing: -0.05em;
+        letter-spacing: -0.06em;
         margin: 8px 0 18px 0;
     }}
 
     .hero-info {{
-        color: #B9BCC2;
-        font-size: 0.9rem;
+        color: #B7BBC2;
+        font-size: 0.88rem;
     }}
 
-    /* 배지 */
+    /* 상태 배지 */
+
     .badge {{
         display: inline-block;
-        padding: 5px 10px;
+        padding: 5px 11px;
         border-radius: 999px;
         background: {NAVY};
         color: white;
-        font-size: 0.75rem;
-        font-weight: 700;
-        margin-right: 5px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
     }}
 
-    /* 구분선 */
-    hr {{
-        border: none;
-        border-top: 1px solid #E8E8E8;
-        margin: 35px 0;
+    /* AI 분석 카드 */
+
+    .analysis-card {{
+        background: #F7F8FA;
+        border-left: 5px solid {NAVY};
+        border-radius: 0 16px 16px 0;
+        padding: 21px 25px;
+        margin: 10px 0;
     }}
 
-    /* 데이터프레임 */
+    .analysis-title {{
+        color: {NAVY};
+        font-weight: 800;
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        margin-bottom: 7px;
+    }}
+
+    .analysis-text {{
+        color: #252525;
+        font-size: 0.94rem;
+        line-height: 1.65;
+    }}
+
+    /* Streamlit 기본 요소 */
+
     [data-testid="stDataFrame"] {{
         border-radius: 15px;
         overflow: hidden;
     }}
 
-    /* 버튼 */
     .stButton > button {{
         border-radius: 10px;
         border: 1px solid {NAVY};
@@ -211,6 +222,12 @@ st.markdown(
         border-color: #20345D;
     }}
 
+    hr {{
+        border: none;
+        border-top: 1px solid #E8E8E8;
+        margin: 35px 0;
+    }}
+
     </style>
     """,
     unsafe_allow_html=True
@@ -218,29 +235,27 @@ st.markdown(
 
 
 # ============================================================
-# 제목
+# 5. 메인 제목
 # ============================================================
 
-st.markdown(
-    '<div class="main-title">BOX OFFICE<br>AI ANALYST</div>',
-    unsafe_allow_html=True
-)
+render_html(
+    """
+    <div class="main-title">
+        BOX OFFICE<br>
+        AI ANALYST
+    </div>
 
-st.markdown(
-    '<div class="navy-line"></div>',
-    unsafe_allow_html=True
-)
+    <div class="navy-line"></div>
 
-st.markdown(
-    '<div class="sub-title">'
-    'KOBIS DAILY BOX OFFICE · DATA-DRIVEN MOVIE ANALYSIS'
-    '</div>',
-    unsafe_allow_html=True
+    <div class="sub-title">
+        KOBIS DAILY BOX OFFICE · DATA-DRIVEN MOVIE ANALYSIS
+    </div>
+    """
 )
 
 
 # ============================================================
-# 한국 시간 기준으로 어제 계산
+# 6. 한국 시간 기준 '어제' 계산
 # ============================================================
 
 kst = ZoneInfo("Asia/Seoul")
@@ -253,7 +268,7 @@ display_date = yesterday.strftime("%Y년 %m월 %d일")
 
 
 # ============================================================
-# KOBIS API
+# 7. KOBIS API 주소
 # ============================================================
 
 API_URL = (
@@ -264,10 +279,11 @@ API_URL = (
 
 
 # ============================================================
-# Secrets에서 API KEY 가져오기
+# 8. API 인증키 가져오기
 # ============================================================
 
 try:
+
     KOBIS_KEY = st.secrets["KOBIS_KEY"]
 
 except Exception:
@@ -283,7 +299,7 @@ except Exception:
 
 
 # ============================================================
-# API 요청
+# 9. KOBIS API 요청
 # ============================================================
 
 params = {
@@ -320,7 +336,7 @@ except requests.exceptions.RequestException as e:
     st.error("KOBIS API에 연결할 수 없습니다.")
 
     st.info(
-        f"인터넷 연결 또는 KOBIS API 상태를 확인해 주세요.\n\n"
+        "인터넷 연결 또는 KOBIS API 상태를 확인해 주세요.\n\n"
         f"오류 내용: {e}"
     )
 
@@ -339,7 +355,7 @@ except ValueError:
 
 
 # ============================================================
-# KOBIS 자체 오류 확인
+# 10. KOBIS API 자체 오류 확인
 # ============================================================
 
 if "faultInfo" in data:
@@ -350,7 +366,11 @@ if "faultInfo" in data:
 
     if isinstance(fault, dict):
 
-        code = fault.get("errorCode", "알 수 없음")
+        code = fault.get(
+            "errorCode",
+            "알 수 없음"
+        )
+
         message = fault.get(
             "errorMessage",
             "오류 메시지가 없습니다."
@@ -359,7 +379,7 @@ if "faultInfo" in data:
         st.info(
             f"오류 코드: {code}\n\n"
             f"오류 내용: {message}\n\n"
-            "특히 Streamlit Cloud의 Secrets에서 "
+            "Streamlit Cloud의 Secrets에서 "
             "`KOBIS_KEY`가 정확한지 확인해 주세요."
         )
 
@@ -367,7 +387,7 @@ if "faultInfo" in data:
 
 
 # ============================================================
-# 박스오피스 결과 확인
+# 11. 박스오피스 결과 확인
 # ============================================================
 
 if "boxOfficeResult" not in data:
@@ -390,7 +410,7 @@ movie_list = boxoffice.get(
 
 
 # ============================================================
-# 영화 목록이 없는 경우
+# 12. 영화 목록이 없는 경우
 # ============================================================
 
 if not movie_list:
@@ -411,7 +431,7 @@ if not movie_list:
 
 
 # ============================================================
-# 데이터 정리
+# 13. 데이터 정리
 # ============================================================
 
 rows = []
@@ -436,13 +456,13 @@ for movie in movie_list:
         scrn_cnt = 0
         show_cnt = 0
 
-    # 스크린당 관객수 계산
+    # 스크린 1개당 관객수
     if scrn_cnt > 0:
         audience_per_screen = audi_cnt / scrn_cnt
     else:
         audience_per_screen = 0
 
-    # 상영 1회당 관객수 계산
+    # 상영 1회당 관객수
     if show_cnt > 0:
         audience_per_show = audi_cnt / show_cnt
     else:
@@ -466,42 +486,33 @@ for movie in movie_list:
 
 df = pd.DataFrame(rows)
 
-df = df.sort_values(
-    "순위",
-    ascending=True
-).reset_index(drop=True)
+df = (
+    df
+    .sort_values("순위")
+    .reset_index(drop=True)
+)
 
 
 # ============================================================
-# AI 분석 함수
+# 14. AI 분석 함수
 # ============================================================
 
 def analyze_movie(movie, all_movies):
-    """
-    영화의 여러 지표를 이용해 간단한 분석 문장을 생성합니다.
-
-    실제 머신러닝 모델이 아니라,
-    KOBIS 데이터를 바탕으로 만든 규칙 기반 분석입니다.
-    """
 
     rank = movie["순위"]
     rank_change = movie["순위변화"]
     audience = movie["관객수"]
-    screen = movie["스크린수"]
     per_screen = movie["스크린당 관객수"]
 
-    # 전체 영화에서 비교하기 위한 기준
     median_audience = all_movies["관객수"].median()
-    median_per_screen = all_movies[
-        "스크린당 관객수"
-    ].median()
+
+    median_per_screen = (
+        all_movies["스크린당 관객수"].median()
+    )
 
     insights = []
 
-    # --------------------------------------------------------
     # 순위 분석
-    # --------------------------------------------------------
-
     if rank_change > 0:
 
         insights.append(
@@ -521,10 +532,7 @@ def analyze_movie(movie, all_movies):
             "전날과 동일한 순위를 유지하고 있습니다."
         )
 
-    # --------------------------------------------------------
     # 관객수 분석
-    # --------------------------------------------------------
-
     if audience >= median_audience * 2:
 
         insights.append(
@@ -544,10 +552,7 @@ def analyze_movie(movie, all_movies):
             "일일 관객수는 전체 영화의 중앙값보다 낮은 편입니다."
         )
 
-    # --------------------------------------------------------
     # 스크린 효율 분석
-    # --------------------------------------------------------
-
     if per_screen >= median_per_screen * 1.5:
 
         insights.append(
@@ -567,10 +572,7 @@ def analyze_movie(movie, all_movies):
             "스크린당 관객수는 상대적으로 낮은 편입니다."
         )
 
-    # --------------------------------------------------------
-    # 종합 판단
-    # --------------------------------------------------------
-
+    # 종합 상태
     if rank <= 3 and per_screen >= median_per_screen:
 
         status = "HIGH MOMENTUM"
@@ -595,7 +597,7 @@ def analyze_movie(movie, all_movies):
 
 
 # ============================================================
-# 1위 영화
+# 15. 1위 영화
 # ============================================================
 
 first_movie = df.iloc[0]
@@ -607,15 +609,15 @@ status, first_insights = analyze_movie(
 
 
 # ============================================================
-# HERO CARD
+# 16. 1위 영화 HERO
 # ============================================================
 
-st.markdown(
+render_html(
     f"""
     <div class="hero-card">
 
         <div class="hero-rank">
-            NO. 01 · {display_date.upper()}
+            NO. 01 · {display_date}
         </div>
 
         <div class="hero-movie">
@@ -623,7 +625,9 @@ st.markdown(
         </div>
 
         <div>
-            <span class="badge">{status}</span>
+            <span class="badge">
+                {status}
+            </span>
         </div>
 
         <div class="hero-info" style="margin-top:18px;">
@@ -635,18 +639,20 @@ st.markdown(
         </div>
 
     </div>
-    """,
-    unsafe_allow_html=True
+    """
 )
 
 
 # ============================================================
-# 핵심 지표
+# 17. 핵심 지표
 # ============================================================
 
-st.markdown(
-    '<div class="section-title">KEY PERFORMANCE</div>',
-    unsafe_allow_html=True
+render_html(
+    """
+    <div class="section-title">
+        KEY PERFORMANCE
+    </div>
+    """
 )
 
 
@@ -655,55 +661,70 @@ col1, col2, col3, col4 = st.columns(4)
 
 with col1:
 
-    st.markdown(
+    render_html(
         f"""
         <div class="kpi-card">
-            <div class="kpi-label">DAILY AUDIENCE</div>
+
+            <div class="kpi-label">
+                DAILY AUDIENCE
+            </div>
+
             <div class="kpi-value">
                 {first_movie["관객수"]:,}
             </div>
+
             <div class="kpi-desc">
                 어제 관객수
             </div>
+
         </div>
-        """,
-        unsafe_allow_html=True
+        """
     )
 
 
 with col2:
 
-    st.markdown(
+    render_html(
         f"""
         <div class="kpi-card">
-            <div class="kpi-label">TOTAL AUDIENCE</div>
+
+            <div class="kpi-label">
+                TOTAL AUDIENCE
+            </div>
+
             <div class="kpi-value">
                 {first_movie["누적관객"]:,}
             </div>
+
             <div class="kpi-desc">
                 누적 관객수
             </div>
+
         </div>
-        """,
-        unsafe_allow_html=True
+        """
     )
 
 
 with col3:
 
-    st.markdown(
+    render_html(
         f"""
         <div class="kpi-card">
-            <div class="kpi-label">AUDIENCE / SCREEN</div>
+
+            <div class="kpi-label">
+                AUDIENCE / SCREEN
+            </div>
+
             <div class="kpi-value">
                 {first_movie["스크린당 관객수"]:,.1f}
             </div>
+
             <div class="kpi-desc">
                 스크린 1개당 관객수
             </div>
+
         </div>
-        """,
-        unsafe_allow_html=True
+        """
     )
 
 
@@ -718,29 +739,37 @@ with col4:
     else:
         change_text = "—"
 
-    st.markdown(
+    render_html(
         f"""
         <div class="kpi-card">
-            <div class="kpi-label">RANK CHANGE</div>
+
+            <div class="kpi-label">
+                RANK CHANGE
+            </div>
+
             <div class="kpi-value">
                 {change_text}
             </div>
+
             <div class="kpi-desc">
                 전일 대비 순위 변화
             </div>
+
         </div>
-        """,
-        unsafe_allow_html=True
+        """
     )
 
 
 # ============================================================
-# AI 분석
+# 18. AI 분석
 # ============================================================
 
-st.markdown(
-    '<div class="section-title">AI ANALYSIS</div>',
-    unsafe_allow_html=True
+render_html(
+    """
+    <div class="section-title">
+        AI ANALYSIS
+    </div>
+    """
 )
 
 st.caption(
@@ -750,7 +779,7 @@ st.caption(
 
 for i, insight in enumerate(first_insights):
 
-    st.markdown(
+    render_html(
         f"""
         <div class="analysis-card">
 
@@ -763,26 +792,24 @@ for i, insight in enumerate(first_insights):
             </div>
 
         </div>
-        """,
-        unsafe_allow_html=True
+        """
     )
 
 
 # ============================================================
-# 전체 영화 분석
+# 19. 전체 박스오피스
 # ============================================================
 
 st.markdown("---")
 
-st.markdown(
-    '<div class="section-title">BOX OFFICE LANDSCAPE</div>',
-    unsafe_allow_html=True
+render_html(
+    """
+    <div class="section-title">
+        BOX OFFICE LANDSCAPE
+    </div>
+    """
 )
 
-
-# ------------------------------------------------------------
-# 상위 5편 관객수
-# ------------------------------------------------------------
 
 top5 = (
     df
@@ -808,12 +835,15 @@ st.bar_chart(
 
 
 # ============================================================
-# 영화 선택 분석
+# 20. 영화별 상세 분석
 # ============================================================
 
-st.markdown(
-    '<div class="section-title">MOVIE DEEP ANALYSIS</div>',
-    unsafe_allow_html=True
+render_html(
+    """
+    <div class="section-title">
+        MOVIE DEEP ANALYSIS
+    </div>
+    """
 )
 
 
@@ -826,9 +856,12 @@ selected_movie_name = st.selectbox(
 )
 
 
-selected_movie = df[
-    df["영화명"] == selected_movie_name
-].iloc[0]
+selected_movie = (
+    df[
+        df["영화명"] == selected_movie_name
+    ]
+    .iloc[0]
+)
 
 
 selected_status, selected_insights = analyze_movie(
@@ -837,20 +870,22 @@ selected_status, selected_insights = analyze_movie(
 )
 
 
-# ------------------------------------------------------------
-# 선택 영화 정보
-# ------------------------------------------------------------
+# ============================================================
+# 21. 선택 영화 정보
+# ============================================================
 
-left, right = st.columns([1, 1])
+left, right = st.columns(2)
 
 
 with left:
 
-    st.markdown(
+    render_html(
         f"""
         <div class="kpi-card">
 
-            <div class="kpi-label">SELECTED MOVIE</div>
+            <div class="kpi-label">
+                SELECTED MOVIE
+            </div>
 
             <div class="kpi-value">
                 {selected_movie["영화명"]}
@@ -868,18 +903,19 @@ with left:
             </div>
 
         </div>
-        """,
-        unsafe_allow_html=True
+        """
     )
 
 
 with right:
 
-    st.markdown(
+    render_html(
         f"""
         <div class="kpi-card">
 
-            <div class="kpi-label">AUDIENCE EFFICIENCY</div>
+            <div class="kpi-label">
+                AUDIENCE EFFICIENCY
+            </div>
 
             <div class="kpi-value">
                 {selected_movie["스크린당 관객수"]:,.1f}
@@ -894,8 +930,7 @@ with right:
             </div>
 
         </div>
-        """,
-        unsafe_allow_html=True
+        """
     )
 
 
@@ -904,7 +939,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 for i, insight in enumerate(selected_insights):
 
-    st.markdown(
+    render_html(
         f"""
         <div class="analysis-card">
 
@@ -917,20 +952,22 @@ for i, insight in enumerate(selected_insights):
             </div>
 
         </div>
-        """,
-        unsafe_allow_html=True
+        """
     )
 
 
 # ============================================================
-# 전체 데이터 표
+# 22. 전체 데이터
 # ============================================================
 
 st.markdown("---")
 
-st.markdown(
-    '<div class="section-title">FULL DATA</div>',
-    unsafe_allow_html=True
+render_html(
+    """
+    <div class="section-title">
+        FULL DATA
+    </div>
+    """
 )
 
 
@@ -948,27 +985,29 @@ display_df = df[
 ].copy()
 
 
-display_df["관객수"] = display_df["관객수"].map(
-    lambda x: f"{x:,}"
-)
+display_df["관객수"] = display_df[
+    "관객수"
+].map(lambda x: f"{x:,}")
 
-display_df["누적관객"] = display_df["누적관객"].map(
-    lambda x: f"{x:,}"
-)
 
-display_df["스크린수"] = display_df["스크린수"].map(
-    lambda x: f"{x:,}"
-)
+display_df["누적관객"] = display_df[
+    "누적관객"
+].map(lambda x: f"{x:,}")
 
-display_df["상영횟수"] = display_df["상영횟수"].map(
-    lambda x: f"{x:,}"
-)
+
+display_df["스크린수"] = display_df[
+    "스크린수"
+].map(lambda x: f"{x:,}")
+
+
+display_df["상영횟수"] = display_df[
+    "상영횟수"
+].map(lambda x: f"{x:,}")
+
 
 display_df["스크린당 관객수"] = display_df[
     "스크린당 관객수"
-].map(
-    lambda x: f"{x:,.1f}"
-)
+].map(lambda x: f"{x:,.1f}")
 
 
 st.dataframe(
@@ -979,22 +1018,22 @@ st.dataframe(
 
 
 # ============================================================
-# 하단
+# 23. 하단
 # ============================================================
 
 st.markdown("---")
 
-st.markdown(
+render_html(
     """
     <div style="
         text-align:center;
         color:#999;
         font-size:0.78rem;
         padding:15px;
+        line-height:1.8;
     ">
         BOX OFFICE AI ANALYST<br>
         Data source · KOBIS Daily Box Office
     </div>
-    """,
-    unsafe_allow_html=True
+    """
 )
