@@ -19,22 +19,35 @@ st.set_page_config(
 
 
 # ============================================================
-# 2. 색상
+# 2. 기본 설정
 # ============================================================
 
 NAVY = "#14213D"
 BLACK = "#0A0A0A"
 WHITE = "#FFFFFF"
-GRAY = "#8A8F98"
+GRAY = "#858A93"
+
+BOXOFFICE_URL = (
+    "https://www.kobis.or.kr/"
+    "kobisopenapi/webservice/rest/boxoffice/"
+    "searchDailyBoxOfficeList.json"
+)
+
+MOVIE_INFO_URL = (
+    "https://www.kobis.or.kr/"
+    "kobisopenapi/webservice/rest/movie/"
+    "searchMovieInfo.json"
+)
 
 
 # ============================================================
 # 3. HTML 출력 함수
 # ============================================================
-# st.markdown()이 아니라 st.html()을 사용합니다.
-# 따라서 <div> 등이 코드처럼 표시되지 않습니다.
 
 def render_html(html):
+    """
+    Streamlit에서 HTML을 코드가 아니라 실제 화면으로 표시합니다.
+    """
     st.html(html)
 
 
@@ -47,25 +60,25 @@ st.html(
     <style>
 
     .stApp {{
-        background: {WHITE};
+        background: #FFFFFF;
     }}
 
     .block-container {{
         max-width: 1400px;
         padding-top: 2.5rem;
-        padding-bottom: 4rem;
+        padding-bottom: 5rem;
     }}
 
-    /* -----------------------------------------
-       메인 제목
-       ----------------------------------------- */
+    /* -------------------------
+       제목
+       ------------------------- */
 
     .main-title {{
         font-family: Arial, sans-serif;
-        font-size: 3.2rem;
+        font-size: 3.3rem;
         font-weight: 900;
-        line-height: 0.95;
-        letter-spacing: -0.06em;
+        line-height: 0.92;
+        letter-spacing: -0.065em;
         color: {BLACK};
     }}
 
@@ -73,100 +86,104 @@ st.html(
         margin-top: 18px;
         color: {GRAY};
         font-family: Arial, sans-serif;
-        font-size: 0.85rem;
-        letter-spacing: 0.08em;
+        font-size: 0.78rem;
+        letter-spacing: 0.12em;
     }}
 
     .navy-line {{
         width: 55px;
         height: 4px;
         background: {NAVY};
-        border-radius: 10px;
-        margin-top: 18px;
+        border-radius: 20px;
+        margin-top: 20px;
     }}
 
-    /* -----------------------------------------
-       섹션 제목
-       ----------------------------------------- */
+    /* -------------------------
+       섹션
+       ------------------------- */
 
     .section-title {{
         font-family: Arial, sans-serif;
-        font-size: 1.4rem;
+        font-size: 1.35rem;
         font-weight: 900;
         letter-spacing: -0.04em;
         color: {BLACK};
-        margin: 30px 0 15px 0;
+        margin: 32px 0 14px 0;
     }}
 
-    /* -----------------------------------------
-       1위 영화 카드
-       ----------------------------------------- */
+    .section-sub {{
+        color: {GRAY};
+        font-size: 0.82rem;
+        margin-bottom: 16px;
+    }}
+
+    /* -------------------------
+       Hero
+       ------------------------- */
 
     .hero-card {{
         background: {BLACK};
-        border-radius: 24px;
-        padding: 34px;
-        margin-top: 30px;
-        margin-bottom: 30px;
+        border-radius: 26px;
+        padding: 38px;
+        margin-top: 32px;
+        margin-bottom: 32px;
     }}
 
     .hero-rank {{
-        color: #AEB5C1;
-        font-family: Arial, sans-serif;
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.14em;
+        color: #AAB0BA;
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.15em;
     }}
 
     .hero-movie {{
         color: white;
-        font-family: Arial, sans-serif;
-        font-size: 2.4rem;
+        font-size: 2.6rem;
         font-weight: 900;
-        letter-spacing: -0.06em;
-        margin-top: 10px;
+        letter-spacing: -0.065em;
+        margin-top: 12px;
         margin-bottom: 18px;
     }}
 
     .hero-info {{
-        color: #B9BDC5;
-        font-size: 0.88rem;
-        margin-top: 18px;
+        color: #B8BDC6;
+        font-size: 0.84rem;
+        margin-top: 20px;
     }}
 
-    /* -----------------------------------------
-       상태 배지
-       ----------------------------------------- */
+    /* -------------------------
+       Badge
+       ------------------------- */
 
     .badge {{
         display: inline-block;
         background: {NAVY};
         color: white;
-        padding: 6px 12px;
+        padding: 7px 13px;
         border-radius: 999px;
-        font-size: 0.7rem;
-        font-weight: 800;
-        letter-spacing: 0.05em;
+        font-size: 0.68rem;
+        font-weight: 900;
+        letter-spacing: 0.07em;
     }}
 
-    /* -----------------------------------------
-       KPI 카드
-       ----------------------------------------- */
+    /* -------------------------
+       KPI
+       ------------------------- */
 
     .kpi-card {{
-        background: white;
+        background: #FFFFFF;
         border: 1px solid #E5E7EB;
         border-radius: 18px;
         padding: 24px;
-        min-height: 135px;
-        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.035);
+        min-height: 145px;
+        box-shadow: 0 5px 22px rgba(0,0,0,0.035);
     }}
 
     .kpi-label {{
         color: {GRAY};
-        font-size: 0.72rem;
-        font-weight: 800;
-        letter-spacing: 0.06em;
+        font-size: 0.68rem;
+        font-weight: 900;
+        letter-spacing: 0.08em;
         margin-bottom: 10px;
     }}
 
@@ -174,51 +191,147 @@ st.html(
         color: {BLACK};
         font-size: 1.65rem;
         font-weight: 900;
-        letter-spacing: -0.05em;
+        letter-spacing: -0.055em;
     }}
 
     .kpi-desc {{
         color: {GRAY};
-        font-size: 0.78rem;
+        font-size: 0.76rem;
         margin-top: 8px;
+        line-height: 1.5;
     }}
 
-    /* -----------------------------------------
-       AI 분석 카드
-       ----------------------------------------- */
+    /* -------------------------
+       Analysis
+       ------------------------- */
 
     .analysis-card {{
         background: #F7F8FA;
         border-left: 5px solid {NAVY};
         border-radius: 0 16px 16px 0;
-        padding: 20px 24px;
+        padding: 20px 25px;
         margin: 10px 0;
     }}
 
     .analysis-title {{
         color: {NAVY};
-        font-size: 0.76rem;
+        font-size: 0.72rem;
         font-weight: 900;
-        letter-spacing: 0.08em;
-        margin-bottom: 7px;
+        letter-spacing: 0.09em;
+        margin-bottom: 8px;
     }}
 
     .analysis-text {{
-        color: #252525;
-        font-size: 0.94rem;
+        color: #242424;
+        font-size: 0.9rem;
         line-height: 1.65;
     }}
 
-    /* -----------------------------------------
-       하단
-       ----------------------------------------- */
+    /* -------------------------
+       Index
+       ------------------------- */
+
+    .index-card {{
+        background: {BLACK};
+        border-radius: 22px;
+        padding: 30px;
+        color: white;
+        min-height: 250px;
+    }}
+
+    .index-number {{
+        font-size: 4.2rem;
+        font-weight: 900;
+        letter-spacing: -0.08em;
+        line-height: 1;
+        margin: 10px 0;
+    }}
+
+    .index-label {{
+        color: #AEB3BD;
+        font-size: 0.7rem;
+        letter-spacing: 0.1em;
+        font-weight: 800;
+    }}
+
+    /* -------------------------
+       Hidden performer
+       ------------------------- */
+
+    .hidden-card {{
+        border: 1px solid #E5E7EB;
+        border-radius: 20px;
+        padding: 28px;
+        background: #FFFFFF;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+    }}
+
+    .hidden-rank {{
+        color: {NAVY};
+        font-size: 0.7rem;
+        font-weight: 900;
+        letter-spacing: 0.1em;
+    }}
+
+    .hidden-name {{
+        font-size: 1.6rem;
+        font-weight: 900;
+        margin-top: 8px;
+    }}
+
+    .hidden-number {{
+        font-size: 2.6rem;
+        font-weight: 900;
+        letter-spacing: -0.06em;
+        margin-top: 18px;
+    }}
+
+    /* -------------------------
+       Profile
+       ------------------------- */
+
+    .profile-card {{
+        border: 1px solid #E5E7EB;
+        border-radius: 20px;
+        padding: 28px;
+        background: white;
+        min-height: 260px;
+    }}
+
+    .profile-title {{
+        font-size: 1.45rem;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        margin-bottom: 20px;
+    }}
+
+    .profile-item {{
+        margin: 12px 0;
+    }}
+
+    .profile-label {{
+        color: {GRAY};
+        font-size: 0.67rem;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+    }}
+
+    .profile-value {{
+        color: {BLACK};
+        font-size: 0.9rem;
+        margin-top: 3px;
+    }}
+
+    /* -------------------------
+       Footer
+       ------------------------- */
 
     .footer {{
         text-align: center;
-        color: #999999;
-        font-size: 0.75rem;
+        color: #999;
+        font-size: 0.72rem;
         line-height: 1.8;
-        padding: 20px;
+        padding: 35px;
     }}
 
     </style>
@@ -231,7 +344,7 @@ st.html(
 # ============================================================
 
 render_html(
-    f"""
+    """
     <div class="main-title">
         BOX OFFICE<br>
         AI ANALYST
@@ -247,33 +360,24 @@ render_html(
 
 
 # ============================================================
-# 6. 한국 시간 기준 어제 계산
+# 6. 한국 시간 기준 날짜
 # ============================================================
 
-kst = ZoneInfo("Asia/Seoul")
+KST = ZoneInfo("Asia/Seoul")
 
-now_kst = datetime.now(kst)
+now_kst = datetime.now(KST)
 
 yesterday = now_kst - timedelta(days=1)
 
 target_date = yesterday.strftime("%Y%m%d")
 
-display_date = yesterday.strftime("%Y년 %m월 %d일")
-
-
-# ============================================================
-# 7. KOBIS API
-# ============================================================
-
-API_URL = (
-    "https://www.kobis.or.kr/"
-    "kobisopenapi/webservice/rest/boxoffice/"
-    "searchDailyBoxOfficeList.json"
+display_date = yesterday.strftime(
+    "%Y년 %m월 %d일"
 )
 
 
 # ============================================================
-# 8. 인증키
+# 7. API KEY
 # ============================================================
 
 try:
@@ -285,7 +389,7 @@ except Exception:
     st.error("KOBIS API 인증키를 찾을 수 없습니다.")
 
     st.info(
-        "Streamlit Cloud → Settings → Secrets에서 "
+        "Streamlit Cloud의 Settings → Secrets에서 "
         "`KOBIS_KEY`가 등록되어 있는지 확인하세요."
     )
 
@@ -293,111 +397,71 @@ except Exception:
 
 
 # ============================================================
-# 9. API 요청
+# 8. KOBIS API 요청 함수
 # ============================================================
 
-params = {
-    "key": KOBIS_KEY,
-    "targetDt": target_date
-}
-
-
-try:
+@st.cache_data(ttl=3600)
+def get_daily_boxoffice(date_str, api_key):
 
     response = requests.get(
-        API_URL,
-        params=params,
-        timeout=10
+        BOXOFFICE_URL,
+        params={
+            "key": api_key,
+            "targetDt": date_str
+        },
+        timeout=15
     )
 
     response.raise_for_status()
 
     data = response.json()
 
-except requests.exceptions.Timeout:
+    if "faultInfo" in data:
 
-    st.error("KOBIS API 요청 시간이 초과되었습니다.")
+        fault = data["faultInfo"]
 
-    st.info(
-        "KOBIS 서버가 응답하지 않았을 수 있습니다. "
-        "잠시 후 다시 시도해 주세요."
+        message = fault.get(
+            "errorMessage",
+            "KOBIS API 오류"
+        )
+
+        raise RuntimeError(message)
+
+    return data
+
+
+# ============================================================
+# 9. 오늘 데이터 가져오기
+# ============================================================
+
+try:
+
+    today_data = get_daily_boxoffice(
+        target_date,
+        KOBIS_KEY
     )
 
-    st.stop()
+except Exception as e:
 
-except requests.exceptions.RequestException as e:
-
-    st.error("KOBIS API에 연결할 수 없습니다.")
+    st.error(
+        "KOBIS 박스오피스 데이터를 가져오지 못했습니다."
+    )
 
     st.info(
-        "인터넷 연결 또는 KOBIS API 상태를 확인해 주세요.\n\n"
+        "다음 사항을 확인해 주세요.\n\n"
+        "• KOBIS_KEY가 정확한지\n"
+        "• KOBIS API 서버가 정상인지\n"
+        "• 해당 날짜의 박스오피스 데이터가 존재하는지\n\n"
         f"오류 내용: {e}"
     )
 
     st.stop()
 
-except ValueError:
 
-    st.error("KOBIS API 응답을 읽을 수 없습니다.")
-
-    st.info(
-        "KOBIS API가 정상적인 JSON 데이터를 반환하는지 확인해 주세요."
-    )
-
-    st.stop()
-
-
-# ============================================================
-# 10. KOBIS 오류 확인
-# ============================================================
-
-if "faultInfo" in data:
-
-    fault = data["faultInfo"]
-
-    st.error("KOBIS API에서 오류를 반환했습니다.")
-
-    if isinstance(fault, dict):
-
-        code = fault.get(
-            "errorCode",
-            "알 수 없음"
-        )
-
-        message = fault.get(
-            "errorMessage",
-            "오류 메시지가 없습니다."
-        )
-
-        st.info(
-            f"오류 코드: {code}\n\n"
-            f"오류 내용: {message}\n\n"
-            "KOBIS_KEY가 정확한지 확인해 주세요."
-        )
-
-    st.stop()
-
-
-# ============================================================
-# 11. 데이터 확인
-# ============================================================
-
-if "boxOfficeResult" not in data:
-
-    st.error("박스오피스 데이터를 찾을 수 없습니다.")
-
-    st.info(
-        "KOBIS API의 응답 또는 서버 상태를 확인해 주세요."
-    )
-
-    st.stop()
-
-
-movie_list = data[
-    "boxOfficeResult"
-].get(
-    "dailyBoxOfficeList",
-    []
+movie_list = (
+    today_data
+    .get("boxOfficeResult", {})
+    .get("dailyBoxOfficeList", [])
 )
 
 
@@ -408,112 +472,193 @@ if not movie_list:
     )
 
     st.info(
-        "다음 항목을 확인해 주세요.\n\n"
-        "• 해당 날짜의 데이터가 KOBIS에서 집계되었는지\n"
-        "• API 인증키가 정상인지\n"
-        "• KOBIS API 서버에 문제가 없는지\n"
-        "• 잠시 후 다시 시도했을 때도 같은지"
+        "KOBIS에서 해당 날짜의 데이터가 아직 집계되지 않았거나 "
+        "API 응답을 확인할 필요가 있습니다."
     )
 
     st.stop()
 
 
 # ============================================================
-# 12. 데이터 정리
+# 10. 일일 데이터 → DataFrame
 # ============================================================
 
-rows = []
+def convert_movies(movie_list):
 
+    rows = []
 
-for movie in movie_list:
+    for movie in movie_list:
 
-    try:
+        def to_int(value):
 
-        rank = int(movie.get("rank", 0))
+            try:
+                return int(value)
+            except:
+                return 0
 
-        rank_inten = int(
-            movie.get("rankInten", 0)
+        audi = to_int(
+            movie.get("audiCnt")
         )
 
-        audi_cnt = int(
-            movie.get("audiCnt", 0)
+        screen = to_int(
+            movie.get("scrnCnt")
         )
 
-        audi_acc = int(
-            movie.get("audiAcc", 0)
+        show = to_int(
+            movie.get("showCnt")
         )
 
-        scrn_cnt = int(
-            movie.get("scrnCnt", 0)
+        per_screen = (
+            audi / screen
+            if screen > 0
+            else 0
         )
 
-        show_cnt = int(
-            movie.get("showCnt", 0)
+        per_show = (
+            audi / show
+            if show > 0
+            else 0
         )
 
-    except (ValueError, TypeError):
-
-        rank = 0
-        rank_inten = 0
-        audi_cnt = 0
-        audi_acc = 0
-        scrn_cnt = 0
-        show_cnt = 0
-
-
-    # 스크린당 관객수
-    if scrn_cnt > 0:
-
-        audience_per_screen = (
-            audi_cnt / scrn_cnt
+        rows.append(
+            {
+                "순위": to_int(movie.get("rank")),
+                "순위변화": to_int(
+                    movie.get("rankInten")
+                ),
+                "영화명": movie.get(
+                    "movieNm",
+                    "-"
+                ),
+                "개봉일": movie.get(
+                    "openDt",
+                    "-"
+                ),
+                "관객수": audi,
+                "누적관객": to_int(
+                    movie.get("audiAcc")
+                ),
+                "스크린수": screen,
+                "상영횟수": show,
+                "스크린당 관객수": per_screen,
+                "회차당 관객수": per_show,
+                "영화코드": movie.get(
+                    "movieCd",
+                    ""
+                )
+            }
         )
 
-    else:
-
-        audience_per_screen = 0
-
-
-    # 회차당 관객수
-    if show_cnt > 0:
-
-        audience_per_show = (
-            audi_cnt / show_cnt
-        )
-
-    else:
-
-        audience_per_show = 0
-
-
-    rows.append(
-        {
-            "순위": rank,
-            "순위변화": rank_inten,
-            "영화명": movie.get(
-                "movieNm",
-                "-"
-            ),
-            "개봉일": movie.get(
-                "openDt",
-                "-"
-            ),
-            "관객수": audi_cnt,
-            "누적관객": audi_acc,
-            "스크린수": scrn_cnt,
-            "상영횟수": show_cnt,
-            "스크린당 관객수": audience_per_screen,
-            "회차당 관객수": audience_per_show
-        }
+    return (
+        pd.DataFrame(rows)
+        .sort_values("순위")
+        .reset_index(drop=True)
     )
 
 
-df = pd.DataFrame(rows)
+df = convert_movies(movie_list)
 
-df = (
-    df
-    .sort_values("순위")
-    .reset_index(drop=True)
+
+# ============================================================
+# 11. 7일치 데이터 가져오기
+# ============================================================
+
+@st.cache_data(ttl=3600)
+def get_week_data(api_key, yesterday_date):
+
+    result = []
+
+    base_date = datetime.strptime(
+        yesterday_date,
+        "%Y%m%d"
+    )
+
+    for i in range(7):
+
+        date_obj = (
+            base_date
+            - timedelta(days=i)
+        )
+
+        date_str = date_obj.strftime(
+            "%Y%m%d"
+        )
+
+        try:
+
+            data = get_daily_boxoffice(
+                date_str,
+                api_key
+            )
+
+            movies = (
+                data
+                .get("boxOfficeResult", {})
+                .get("dailyBoxOfficeList", [])
+            )
+
+            for movie in movies:
+
+                try:
+                    audience = int(
+                        movie.get(
+                            "audiCnt",
+                            0
+                        )
+                    )
+                except:
+                    audience = 0
+
+                try:
+                    rank = int(
+                        movie.get(
+                            "rank",
+                            0
+                        )
+                    )
+                except:
+                    rank = 0
+
+                try:
+                    screen = int(
+                        movie.get(
+                            "scrnCnt",
+                            0
+                        )
+                    )
+                except:
+                    screen = 0
+
+                result.append(
+                    {
+                        "날짜": date_str,
+                        "영화명": movie.get(
+                            "movieNm",
+                            "-"
+                        ),
+                        "관객수": audience,
+                        "순위": rank,
+                        "스크린수": screen
+                    }
+                )
+
+        except Exception:
+            continue
+
+    return pd.DataFrame(result)
+
+
+week_df = get_week_data(
+    KOBIS_KEY,
+    target_date
 )
+
+
+# ============================================================
+# 12. 1위 영화
+# ============================================================
+
+first_movie = df.iloc[0]
 
 
 # ============================================================
@@ -528,26 +673,23 @@ def analyze_movie(movie, all_movies):
 
     audience = movie["관객수"]
 
-    per_screen = movie[
+    efficiency = movie[
         "스크린당 관객수"
     ]
-
 
     median_audience = (
         all_movies["관객수"].median()
     )
 
-    median_per_screen = (
+    median_efficiency = (
         all_movies[
             "스크린당 관객수"
         ].median()
     )
 
-
     insights = []
 
-
-    # 순위 변화
+    # 순위
     if rank_change > 0:
 
         insights.append(
@@ -567,8 +709,7 @@ def analyze_movie(movie, all_movies):
             "전날과 동일한 순위를 유지하고 있습니다."
         )
 
-
-    # 관객수
+    # 관객
     if audience >= median_audience * 2:
 
         insights.append(
@@ -588,16 +729,15 @@ def analyze_movie(movie, all_movies):
             "일일 관객수는 전체 영화의 중앙값보다 낮은 편입니다."
         )
 
-
-    # 스크린 효율
-    if per_screen >= median_per_screen * 1.5:
+    # 효율
+    if efficiency >= median_efficiency * 1.5:
 
         insights.append(
-            "스크린당 관객수가 높은 편으로, "
+            "스크린당 관객수가 매우 높은 편으로, "
             "상영관 대비 관객 집중도가 높게 나타납니다."
         )
 
-    elif per_screen >= median_per_screen:
+    elif efficiency >= median_efficiency:
 
         insights.append(
             "스크린당 관객수가 전체 영화의 중앙값 이상입니다."
@@ -609,11 +749,10 @@ def analyze_movie(movie, all_movies):
             "스크린당 관객수는 상대적으로 낮은 편입니다."
         )
 
-
-    # 종합 상태
+    # 상태
     if (
         rank <= 3
-        and per_screen >= median_per_screen
+        and efficiency >= median_efficiency
     ):
 
         status = "HIGH MOMENTUM"
@@ -634,17 +773,71 @@ def analyze_movie(movie, all_movies):
 
         status = "NORMAL"
 
-
     return status, insights
 
 
 # ============================================================
-# 14. 1위 영화
+# 14. BOX OFFICE INDEX
 # ============================================================
 
-first_movie = df.iloc[0]
+def calculate_index(movie, all_movies):
 
-status, first_insights = analyze_movie(
+    # 관객수 상대값
+    audience_score = (
+        movie["관객수"]
+        / all_movies["관객수"].max()
+        * 100
+    )
+
+    # 스크린 효율 상대값
+    efficiency_max = (
+        all_movies[
+            "스크린당 관객수"
+        ].max()
+    )
+
+    if efficiency_max > 0:
+
+        efficiency_score = (
+            movie["스크린당 관객수"]
+            / efficiency_max
+            * 100
+        )
+
+    else:
+
+        efficiency_score = 0
+
+    # 순위 점수
+    rank_score = max(
+        0,
+        100 - (
+            movie["순위"] - 1
+        ) * 5
+    )
+
+    # 순위 변화
+    momentum_score = min(
+        100,
+        max(
+            0,
+            50 + movie["순위변화"] * 10
+        )
+    )
+
+    score = (
+        audience_score * 0.35
+        + efficiency_score * 0.25
+        + rank_score * 0.25
+        + momentum_score * 0.15
+    )
+
+    return round(
+        min(100, score)
+    )
+
+
+first_index = calculate_index(
     first_movie,
     df
 )
@@ -653,6 +846,11 @@ status, first_insights = analyze_movie(
 # ============================================================
 # 15. HERO
 # ============================================================
+
+hero_status, hero_insights = analyze_movie(
+    first_movie,
+    df
+)
 
 render_html(
     f"""
@@ -666,11 +864,9 @@ render_html(
             {first_movie["영화명"]}
         </div>
 
-        <div>
-            <span class="badge">
-                {status}
-            </span>
-        </div>
+        <span class="badge">
+            {hero_status}
+        </span>
 
         <div class="hero-info">
             개봉일 {first_movie["개봉일"]}
@@ -697,15 +893,10 @@ render_html(
     """
 )
 
+c1, c2, c3, c4 = st.columns(4)
 
-col1, col2, col3, col4 = st.columns(4)
 
-
-# ------------------------------------------------------------
-# 카드 1
-# ------------------------------------------------------------
-
-with col1:
+with c1:
 
     render_html(
         f"""
@@ -728,11 +919,7 @@ with col1:
     )
 
 
-# ------------------------------------------------------------
-# 카드 2
-# ------------------------------------------------------------
-
-with col2:
+with c2:
 
     render_html(
         f"""
@@ -755,11 +942,7 @@ with col2:
     )
 
 
-# ------------------------------------------------------------
-# 카드 3
-# ------------------------------------------------------------
-
-with col3:
+with c3:
 
     render_html(
         f"""
@@ -782,31 +965,16 @@ with col3:
     )
 
 
-# ------------------------------------------------------------
-# 카드 4
-# ------------------------------------------------------------
+with c4:
 
-with col4:
+    if first_movie["순위변화"] > 0:
+        change = f"▲ {first_movie['순위변화']}"
 
-    rank_change = first_movie["순위변화"]
-
-
-    if rank_change > 0:
-
-        change_text = (
-            f"▲ {rank_change}"
-        )
-
-    elif rank_change < 0:
-
-        change_text = (
-            f"▼ {abs(rank_change)}"
-        )
+    elif first_movie["순위변화"] < 0:
+        change = f"▼ {abs(first_movie['순위변화'])}"
 
     else:
-
-        change_text = "—"
-
+        change = "—"
 
     render_html(
         f"""
@@ -817,7 +985,7 @@ with col4:
             </div>
 
             <div class="kpi-value">
-                {change_text}
+                {change}
             </div>
 
             <div class="kpi-desc">
@@ -838,17 +1006,16 @@ render_html(
     <div class="section-title">
         AI ANALYSIS
     </div>
+
+    <div class="section-sub">
+        KOBIS 데이터를 기반으로 관객수·순위·스크린 효율을 분석합니다.
+    </div>
     """
 )
 
 
-st.caption(
-    "KOBIS 데이터를 바탕으로 관객수·순위 변화·스크린 효율을 분석했습니다."
-)
-
-
 for i, insight in enumerate(
-    first_insights
+    hero_insights
 ):
 
     render_html(
@@ -874,15 +1041,17 @@ for i, insight in enumerate(
 
 st.markdown("---")
 
-
 render_html(
     """
     <div class="section-title">
         BOX OFFICE LANDSCAPE
     </div>
+
+    <div class="section-sub">
+        오늘의 관객수 상위 5편과 전체 관객 집중도를 확인합니다.
+    </div>
     """
 )
-
 
 top5 = (
     df
@@ -909,33 +1078,432 @@ st.bar_chart(
 
 
 # ============================================================
-# 19. MOVIE DEEP ANALYSIS
+# 19. 관객 집중도
 # ============================================================
+
+total_audience = df["관객수"].sum()
+
+top5_audience = top5["관객수"].sum()
+
+if total_audience > 0:
+
+    concentration = (
+        top5_audience
+        / total_audience
+        * 100
+    )
+
+else:
+
+    concentration = 0
+
+
+cc1, cc2 = st.columns(2)
+
+
+with cc1:
+
+    render_html(
+        f"""
+        <div class="kpi-card">
+
+            <div class="kpi-label">
+                TOP 5 AUDIENCE SHARE
+            </div>
+
+            <div class="kpi-value">
+                {concentration:.1f}%
+            </div>
+
+            <div class="kpi-desc">
+                전체 집계 영화 관객 중
+                상위 5편이 차지하는 비율
+            </div>
+
+        </div>
+        """
+    )
+
+
+with cc2:
+
+    render_html(
+        f"""
+        <div class="kpi-card">
+
+            <div class="kpi-label">
+                DAILY MARKET
+            </div>
+
+            <div class="kpi-value">
+                {total_audience:,}
+            </div>
+
+            <div class="kpi-desc">
+                집계된 영화의 총 일일 관객수
+            </div>
+
+        </div>
+        """
+    )
+
+
+# ============================================================
+# 20. 7-DAY TREND
+# ============================================================
+
+st.markdown("---")
+
+render_html(
+    """
+    <div class="section-title">
+        7-DAY TREND
+    </div>
+
+    <div class="section-sub">
+        최근 7일 동안 선택한 영화의 관객수와 순위 변화를 추적합니다.
+    </div>
+    """
+)
+
+
+week_movies = sorted(
+    week_df["영화명"].unique().tolist()
+)
+
+
+default_movie = first_movie["영화명"]
+
+if default_movie in week_movies:
+
+    default_index = (
+        week_movies.index(default_movie)
+    )
+
+else:
+
+    default_index = 0
+
+
+trend_movie = st.selectbox(
+    "추이를 확인할 영화를 선택하세요.",
+    week_movies,
+    index=default_index,
+    key="trend_movie"
+)
+
+
+selected_week = (
+    week_df[
+        week_df["영화명"]
+        == trend_movie
+    ]
+    .copy()
+)
+
+
+selected_week["날짜표시"] = pd.to_datetime(
+    selected_week["날짜"],
+    format="%Y%m%d"
+).dt.strftime("%m/%d")
+
+
+selected_week = (
+    selected_week
+    .sort_values("날짜")
+)
+
+
+t1, t2 = st.columns(2)
+
+
+with t1:
+
+    st.caption("DAILY AUDIENCE")
+
+    audience_chart = (
+        selected_week
+        .set_index("날짜표시")
+        [["관객수"]]
+    )
+
+    st.line_chart(
+        audience_chart
+    )
+
+
+with t2:
+
+    st.caption("RANK TREND")
+
+    rank_chart = (
+        selected_week
+        .set_index("날짜표시")
+        [["순위"]]
+    )
+
+    st.line_chart(
+        rank_chart
+    )
+
+
+# ============================================================
+# 21. HIDDEN PERFORMER
+# ============================================================
+
+st.markdown("---")
+
+render_html(
+    """
+    <div class="section-title">
+        HIDDEN PERFORMER
+    </div>
+
+    <div class="section-sub">
+        단순 관객수 순위와 다른 관점에서 스크린 효율이 높은 영화를 찾습니다.
+    </div>
+    """
+)
+
+
+hidden = (
+    df
+    .sort_values(
+        "스크린당 관객수",
+        ascending=False
+    )
+    .iloc[0]
+)
+
+
+hc1, hc2 = st.columns([1, 2])
+
+
+with hc1:
+
+    render_html(
+        f"""
+        <div class="hidden-card">
+
+            <div class="hidden-rank">
+                HIGHEST AUDIENCE / SCREEN
+            </div>
+
+            <div class="hidden-name">
+                {hidden["영화명"]}
+            </div>
+
+            <div class="hidden-number">
+                {hidden["스크린당 관객수"]:,.1f}
+            </div>
+
+            <div class="kpi-desc">
+                스크린당 관객수
+            </div>
+
+        </div>
+        """
+    )
+
+
+with hc2:
+
+    render_html(
+        f"""
+        <div class="hidden-card">
+
+            <div class="hidden-rank">
+                WHY IT STANDS OUT
+            </div>
+
+            <div style="font-size:1.15rem;font-weight:800;margin-top:10px;">
+                {hidden["순위"]}위 영화지만
+                {hidden["스크린수"]:,}개 스크린에서
+                스크린당 {hidden["스크린당 관객수"]:,.1f}명의
+                관객을 기록했습니다.
+            </div>
+
+            <div class="kpi-desc" style="margin-top:15px;">
+                전체 박스오피스 순위와
+                상영 효율은 서로 다른 모습을 보일 수 있습니다.
+            </div>
+
+        </div>
+        """
+    )
+
+
+# ============================================================
+# 22. BOX OFFICE INDEX
+# ============================================================
+
+st.markdown("---")
+
+render_html(
+    """
+    <div class="section-title">
+        BOX OFFICE INDEX
+    </div>
+
+    <div class="section-sub">
+        관객수·스크린 효율·순위·순위 변화를 조합한 데이터 기반 지표입니다.
+    </div>
+    """
+)
+
+
+index_movie_name = st.selectbox(
+    "지수를 확인할 영화를 선택하세요.",
+    df["영화명"].tolist(),
+    key="index_movie"
+)
+
+
+index_movie = (
+    df[
+        df["영화명"]
+        == index_movie_name
+    ]
+    .iloc[0]
+)
+
+
+movie_index = calculate_index(
+    index_movie,
+    df
+)
+
+
+idx1, idx2 = st.columns([1, 2])
+
+
+with idx1:
+
+    render_html(
+        f"""
+        <div class="index-card">
+
+            <div class="index-label">
+                BOX OFFICE INDEX
+            </div>
+
+            <div class="index-number">
+                {movie_index}
+            </div>
+
+            <div class="index-label">
+                / 100
+            </div>
+
+        </div>
+        """
+    )
+
+
+with idx2:
+
+    # 세부 지표
+    audience_component = round(
+        index_movie["관객수"]
+        / df["관객수"].max()
+        * 100
+    )
+
+    efficiency_component = round(
+        index_movie["스크린당 관객수"]
+        / max(
+            df["스크린당 관객수"].max(),
+            1
+        )
+        * 100
+    )
+
+    rank_component = max(
+        0,
+        100 - (
+            index_movie["순위"] - 1
+        ) * 5
+    )
+
+    render_html(
+        f"""
+        <div class="profile-card">
+
+            <div class="profile-title">
+                {index_movie["영화명"]}
+            </div>
+
+            <div class="profile-item">
+
+                <div class="profile-label">
+                    AUDIENCE
+                </div>
+
+                <div class="profile-value">
+                    {audience_component}/100
+                </div>
+
+            </div>
+
+            <div class="profile-item">
+
+                <div class="profile-label">
+                    SCREEN EFFICIENCY
+                </div>
+
+                <div class="profile-value">
+                    {efficiency_component}/100
+                </div>
+
+            </div>
+
+            <div class="profile-item">
+
+                <div class="profile-label">
+                    RANK
+                </div>
+
+                <div class="profile-value">
+                    {rank_component}/100
+                </div>
+
+            </div>
+
+        </div>
+        """
+    )
+
+
+# ============================================================
+# 23. MOVIE DEEP ANALYSIS
+# ============================================================
+
+st.markdown("---")
 
 render_html(
     """
     <div class="section-title">
         MOVIE DEEP ANALYSIS
     </div>
+
+    <div class="section-sub">
+        특정 영화를 선택하여 현재 흥행 상태를 자세히 분석합니다.
+    </div>
     """
 )
 
 
-movie_names = df[
-    "영화명"
-].tolist()
-
-
-selected_movie_name = st.selectbox(
+selected_name = st.selectbox(
     "분석할 영화를 선택하세요.",
-    movie_names
+    df["영화명"].tolist(),
+    key="deep_movie"
 )
 
 
-selected_movie = (
+selected = (
     df[
         df["영화명"]
-        == selected_movie_name
+        == selected_name
     ]
     .iloc[0]
 )
@@ -943,42 +1511,47 @@ selected_movie = (
 
 selected_status, selected_insights = (
     analyze_movie(
-        selected_movie,
+        selected,
         df
     )
 )
 
 
-# ============================================================
-# 20. 선택 영화 카드
-# ============================================================
-
-left, right = st.columns(2)
+dc1, dc2 = st.columns(2)
 
 
-with left:
+with dc1:
 
     render_html(
         f"""
-        <div class="kpi-card">
+        <div class="profile-card">
 
-            <div class="kpi-label">
-                SELECTED MOVIE
+            <div class="profile-title">
+                {selected["영화명"]}
             </div>
 
-            <div class="kpi-value">
-                {selected_movie["영화명"]}
+            <span class="badge">
+                {selected_status}
+            </span>
+
+            <div class="profile-item">
+                <div class="profile-label">
+                    CURRENT RANK
+                </div>
+
+                <div class="profile-value">
+                    {selected["순위"]}위
+                </div>
             </div>
 
-            <div style="margin-top:15px;">
-                <span class="badge">
-                    {selected_status}
-                </span>
-            </div>
+            <div class="profile-item">
+                <div class="profile-label">
+                    RELEASE
+                </div>
 
-            <div class="kpi-desc">
-                현재 순위 {selected_movie["순위"]}위
-                · 개봉일 {selected_movie["개봉일"]}
+                <div class="profile-value">
+                    {selected["개봉일"]}
+                </div>
             </div>
 
         </div>
@@ -986,36 +1559,45 @@ with left:
     )
 
 
-with right:
+with dc2:
 
     render_html(
         f"""
-        <div class="kpi-card">
+        <div class="profile-card">
 
-            <div class="kpi-label">
+            <div class="profile-title">
                 AUDIENCE EFFICIENCY
             </div>
 
-            <div class="kpi-value">
-                {selected_movie["스크린당 관객수"]:,.1f}
+            <div class="index-number"
+                 style="font-size:3rem;color:{BLACK};">
+                {selected["스크린당 관객수"]:,.1f}
             </div>
 
-            <div class="kpi-desc">
-                스크린당 관객수
+            <div class="profile-item">
+                <div class="profile-label">
+                    DAILY AUDIENCE
+                </div>
+
+                <div class="profile-value">
+                    {selected["관객수"]:,}명
+                </div>
             </div>
 
-            <div style="margin-top:12px; color:#777;">
-                총 {selected_movie["스크린수"]:,}개 스크린
+            <div class="profile-item">
+                <div class="profile-label">
+                    SCREENS
+                </div>
+
+                <div class="profile-value">
+                    {selected["스크린수"]:,}개
+                </div>
             </div>
 
         </div>
         """
     )
 
-
-# ============================================================
-# 21. 선택 영화 분석
-# ============================================================
 
 for i, insight in enumerate(
     selected_insights
@@ -1039,16 +1621,264 @@ for i, insight in enumerate(
 
 
 # ============================================================
-# 22. FULL DATA
+# 24. 영화 상세정보 API
 # ============================================================
 
 st.markdown("---")
 
+render_html(
+    """
+    <div class="section-title">
+        MOVIE PROFILE
+    </div>
+
+    <div class="section-sub">
+        KOBIS 영화정보 API에서 제공하는 작품 정보를 표시합니다.
+    </div>
+    """
+)
+
+
+@st.cache_data(ttl=86400)
+def get_movie_info(movie_code, api_key):
+
+    if not movie_code:
+
+        return None
+
+    response = requests.get(
+        MOVIE_INFO_URL,
+        params={
+            "key": api_key,
+            "movieCd": movie_code
+        },
+        timeout=15
+    )
+
+    response.raise_for_status()
+
+    data = response.json()
+
+    if "faultInfo" in data:
+
+        return None
+
+    return (
+        data
+        .get("movieInfoResult", {})
+        .get("movieInfo")
+    )
+
+
+movie_info = get_movie_info(
+    selected["영화코드"],
+    KOBIS_KEY
+)
+
+
+if movie_info:
+
+    directors = ", ".join(
+        [
+            person.get(
+                "peopleNm",
+                ""
+            )
+            for person in movie_info.get(
+                "directors",
+                []
+            )
+        ]
+    )
+
+    actors = ", ".join(
+        [
+            person.get(
+                "peopleNm",
+                ""
+            )
+            for person in movie_info.get(
+                "actors",
+                []
+            )[:5]
+        ]
+    )
+
+    genres = ", ".join(
+        [
+            genre.get(
+                "genreNm",
+                ""
+            )
+            for genre in movie_info.get(
+                "genres",
+                []
+            )
+        ]
+    )
+
+    countries = ", ".join(
+        [
+            country.get(
+                "nationNm",
+                ""
+            )
+            for country in movie_info.get(
+                "nations",
+                []
+            )
+        ]
+    )
+
+    runtime = movie_info.get(
+        "showTm",
+        "-"
+    )
+
+    production_year = movie_info.get(
+        "prdtYear",
+        "-"
+    )
+
+    p1, p2, p3 = st.columns(3)
+
+
+    with p1:
+
+        render_html(
+            f"""
+            <div class="profile-card">
+
+                <div class="profile-title">
+                    BASIC INFO
+                </div>
+
+                <div class="profile-item">
+                    <div class="profile-label">
+                        TITLE
+                    </div>
+
+                    <div class="profile-value">
+                        {movie_info.get("movieNm", "-")}
+                    </div>
+                </div>
+
+                <div class="profile-item">
+                    <div class="profile-label">
+                        YEAR
+                    </div>
+
+                    <div class="profile-value">
+                        {production_year}
+                    </div>
+                </div>
+
+                <div class="profile-item">
+                    <div class="profile-label">
+                        RUNTIME
+                    </div>
+
+                    <div class="profile-value">
+                        {runtime}분
+                    </div>
+                </div>
+
+            </div>
+            """
+        )
+
+
+    with p2:
+
+        render_html(
+            f"""
+            <div class="profile-card">
+
+                <div class="profile-title">
+                    CREATIVE
+                </div>
+
+                <div class="profile-item">
+                    <div class="profile-label">
+                        DIRECTOR
+                    </div>
+
+                    <div class="profile-value">
+                        {directors or "-"}
+                    </div>
+                </div>
+
+                <div class="profile-item">
+                    <div class="profile-label">
+                        ACTORS
+                    </div>
+
+                    <div class="profile-value">
+                        {actors or "-"}
+                    </div>
+                </div>
+
+            </div>
+            """
+        )
+
+
+    with p3:
+
+        render_html(
+            f"""
+            <div class="profile-card">
+
+                <div class="profile-title">
+                    CLASSIFICATION
+                </div>
+
+                <div class="profile-item">
+                    <div class="profile-label">
+                        GENRE
+                    </div>
+
+                    <div class="profile-value">
+                        {genres or "-"}
+                    </div>
+                </div>
+
+                <div class="profile-item">
+                    <div class="profile-label">
+                        COUNTRY
+                    </div>
+
+                    <div class="profile-value">
+                        {countries or "-"}
+                    </div>
+                </div>
+
+            </div>
+            """
+        )
+
+else:
+
+    st.info(
+        "선택한 영화의 상세정보를 KOBIS에서 가져오지 못했습니다. "
+        "박스오피스 데이터 자체에는 영향을 주지 않습니다."
+    )
+
+
+# ============================================================
+# 25. FULL DATA
+# ============================================================
+
+st.markdown("---")
 
 render_html(
     """
     <div class="section-title">
         FULL DATA
+    </div>
+
+    <div class="section-sub">
+        어제의 전체 일일 박스오피스 데이터입니다.
     </div>
     """
 )
@@ -1073,24 +1903,20 @@ display_df["관객수"] = (
     .map(lambda x: f"{x:,}")
 )
 
-
 display_df["누적관객"] = (
     display_df["누적관객"]
     .map(lambda x: f"{x:,}")
 )
-
 
 display_df["스크린수"] = (
     display_df["스크린수"]
     .map(lambda x: f"{x:,}")
 )
 
-
 display_df["상영횟수"] = (
     display_df["상영횟수"]
     .map(lambda x: f"{x:,}")
 )
-
 
 display_df["스크린당 관객수"] = (
     display_df["스크린당 관객수"]
@@ -1106,14 +1932,14 @@ st.dataframe(
 
 
 # ============================================================
-# 23. FOOTER
+# 26. Footer
 # ============================================================
 
 render_html(
     """
     <div class="footer">
         BOX OFFICE AI ANALYST<br>
-        Data source · KOBIS Daily Box Office
+        Data source · KOBIS Daily Box Office & Movie Information
     </div>
     """
 )
