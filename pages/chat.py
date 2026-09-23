@@ -1,4 +1,25 @@
-# 에스체트 동료이자 관찰자인 사용자와 레오나르드의 대화 설정
+import streamlit as st
+from openai import OpenAI
+
+# 페이지 제목 및 브라우저 탭 설정
+st.set_page_config(page_title="에스체트 단장실 - 레오나르드", page_icon="🗡️")
+st.title("🗡️ 에스체트 단장실")
+
+# Streamlit secrets에서 API 키 불러오기
+api_key = st.secrets.get("GEMINI_API_KEY")
+
+# API 키가 설정되지 않았을 경우 안내 메시지 출력
+if not api_key:
+    st.error("API 키를 찾을 수 없습니다. secrets 설정에서 GEMINI_API_KEY를 등록해 주세요.")
+    st.stop()
+
+# Gemini OpenAI 호환 엔드포인트를 사용하는 OpenAI 클라이언트 생성
+client = OpenAI(
+    api_key=api_key,
+    base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+)
+
+# AI 시스템 프롬프트 (레오나르드 비텔스바흐 설정)
 SYSTEM_PROMPT = {
     "role": "system",
     "content": (
@@ -20,3 +41,46 @@ SYSTEM_PROMPT = {
         "5. 반드시 자연스러운 한국어로 답변하라."
     ),
 }
+
+# 대화 기록 저장을 위한 session_state 초기화
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# 화면에 이전 대화 내용 출력
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.write(msg["content"])
+
+# 사용자 입력창 생성
+if prompt := st.chat_input("단장에게 말을 걸어보세요."):
+    # 1. 사용자가 보낸 메시지를 화면에 말풍선으로 표시
+    with st.chat_message("user"):
+        st.write(prompt)
+
+    # 2. 대화 기록에 사용자 메시지 추가
+    st.session_state.messages.append({"role": "user", "content": prompt})
+
+    # 3. AI 답변 생성 및 실시간 스트리밍 출력
+    with st.chat_message("assistant"):
+        try:
+            # API 전송용 메시지 목록 구성: 시스템 지침 + 이전 대화 기록 전체
+            api_messages = [SYSTEM_PROMPT] + st.session_state.messages
+
+            # OpenAI 호환 형식으로 Gemini 모델 호출
+            response = client.chat.completions.create(
+                model="gemini-3.5-flash-lite",
+                messages=api_messages,
+                stream=True,
+            )
+
+            # 실시간으로 글자가 타이핑되듯 흘러나오게 표시
+            full_response = st.write_stream(response)
+
+            # 4. 생성된 답변을 대화 기록에 저장
+            st.session_state.messages.append(
+                {"role": "assistant", "content": full_response}
+            )
+
+        except Exception:
+            # 오류 발생 시 사용자 친화적인 한국어 안내 문구 표시
+            st.error("답변을 불러오는 중에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.")
