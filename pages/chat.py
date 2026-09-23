@@ -1,86 +1,185 @@
 import streamlit as st
 from openai import OpenAI
 
-# 페이지 제목 및 브라우저 탭 설정
-st.set_page_config(page_title="에스체트 단장실 - 레오나르드", page_icon="🗡️")
-st.title("🗡️ 에스체트 단장실")
+# 페이지 기본 설정
+st.set_page_config(
+    page_title="밀실 - 레오나르드 비텔스바흐",
+    page_icon="🕯️",
+    layout="centered"
+)
+
+# -------------------------------------------------------------
+# 로판풍 어두운 창고 / 석조 밀실 스타일링 (Custom CSS)
+# -------------------------------------------------------------
+st.markdown("""
+<style>
+    /* 전체 배경: 어두운 석조 벽돌 및 오래된 창고 느낌 */
+    .stApp {
+        background-color: #121316;
+        background-image: 
+            radial-gradient(ellipse at top, rgba(35, 30, 25, 0.6) 0%, rgba(10, 10, 12, 0.95) 80%),
+            linear-gradient(to bottom, #141419, #0d0e11);
+        color: #d6cbba;
+        font-family: 'Nanum Myeongjo', 'Batang', serif;
+    }
+
+    /* 제목 및 부제 헤더 */
+    .warehouse-title {
+        text-align: center;
+        color: #c9a96e;
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        margin-bottom: 4px;
+        text-shadow: 0 0 12px rgba(201, 169, 110, 0.3);
+    }
+    .warehouse-subtitle {
+        text-align: center;
+        color: #7b7468;
+        font-size: 0.9rem;
+        font-style: italic;
+        margin-bottom: 25px;
+        letter-spacing: 1px;
+    }
+
+    /* 말풍선 컨테이너 기본 스타일 */
+    .stChatMessage {
+        background-color: rgba(22, 23, 28, 0.75) !important;
+        border: 1px solid rgba(139, 115, 85, 0.3) !important;
+        border-radius: 6px !important;
+        padding: 12px 16px !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
+        margin-bottom: 12px !important;
+        backdrop-filter: blur(4px);
+    }
+
+    /* AI(레오나르드) 말풍선 강조: 바이에른 제복을 연상시키는 묵직한 청회색/골드 */
+    [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
+        background: linear-gradient(135deg, rgba(20, 24, 33, 0.9) 0%, rgba(15, 17, 24, 0.9) 100%) !important;
+        border-left: 3px solid #c9a96e !important;
+    }
+
+    /* 사용자 말풍선 강조: 낡은 양피지/가죽 느낌의 갈색빛 톤 */
+    [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
+        background: linear-gradient(135deg, rgba(28, 24, 20, 0.9) 0%, rgba(18, 16, 14, 0.9) 100%) !important;
+        border-left: 3px solid #6b5840 !important;
+    }
+
+    /* 본문 글자색: 바랜 양피지 느낌의 아이보리 톤 */
+    .stChatMessage p {
+        color: #ded6c8 !important;
+        line-height: 1.65;
+        font-size: 0.98rem;
+    }
+
+    /* 지문 묘사(괄호, 이탤릭 등) 색상 은은하게 처리 */
+    .stChatMessage em {
+        color: #a39580 !important;
+    }
+
+    /* 하단 채팅 입력창 스타일 */
+    div[data-testid="stChatInput"] {
+        background-color: #14151a !important;
+        border: 1px solid #5a4b38 !important;
+        border-radius: 4px !important;
+        box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.6) !important;
+    }
+    div[data-testid="stChatInput"] textarea {
+        color: #e5ded3 !important;
+        font-family: 'Nanum Myeongjo', 'Batang', serif !important;
+    }
+    div[data-testid="stChatInput"] textarea::placeholder {
+        color: #615a50 !important;
+        font-style: italic;
+    }
+
+    /* 스크롤바 커스텀 */
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #0d0e11;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #3a3227;
+        border-radius: 3px;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# 창고 분위기 헤더
+st.markdown('<div class="warehouse-title">🕯️ 비공식 집현실 (集賢室)</div>', unsafe_allow_html=True)
+st.markdown('<div class="warehouse-subtitle">외딴 창고 깊숙한 곳, 낡은 촛불만이 둘 사이의 그림자를 길게 늘어뜨린다.</div>', unsafe_allow_html=True)
 
 # Streamlit secrets에서 API 키 불러오기
 api_key = st.secrets.get("GEMINI_API_KEY")
 
-# API 키가 설정되지 않았을 경우 안내 메시지 출력
 if not api_key:
     st.error("API 키를 찾을 수 없습니다. secrets 설정에서 GEMINI_API_KEY를 등록해 주세요.")
     st.stop()
 
-# Gemini OpenAI 호환 엔드포인트를 사용하는 OpenAI 클라이언트 생성
+# Gemini OpenAI 호환 엔드포인트 클라이언트
 client = OpenAI(
     api_key=api_key,
     base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
 )
 
-# AI 시스템 프롬프트 (레오나르드 비텔스바흐 설정)
+# AI 시스템 프롬프트 (레오나르드 비텔스바흐)
 SYSTEM_PROMPT = {
     "role": "system",
     "content": (
         "너는 웹소설 <마법명가 차남으로 살아남는 법>의 등장인물 '레오나르드 비텔스바흐(레오)'다. "
         "너는 바이에른의 왕세자이자 101기 에스체트(Eszett)의 단장이다.\n\n"
+        "[공간 배경]\n"
+        "- 현재 둘이 있는 장소는 남들의 눈을 피해 들어온 '아카데미 외딴 곳의 어둡고 낡은 창고'다. "
+        "주변엔 방치된 목재 상자들과 먼지 쌓인 마법 장비들이 쌓여 있고, 희미한 촛불 하나만이 켜져 있어 "
+        "대화의 무게감과 비밀스러움이 극대화된 은밀한 장소다.\n\n"
         "[대화 상대(사용자)와의 관계]\n"
-        "- 상대는 네가 깊이 신뢰하는 에스체트의 핵심 동료이자 전우다.\n"
-        "- 특히 상대는 너와 루카스 아스카니엔, 엘리아스 호엔촐레른, 나르케 사이의 얽히고설킨 관계와 속사정, "
-        "그리고 루카스를 향한 네 무겁고 위태로운 헌신과 감정선까지 전부 꿰뚫어 보고 있는 유일한 인물이다.\n"
-        "- 너 역시 상대가 이 모든 것을 알고 있다는 사실을 명확히 인지하고 있다. 따라서 상대 앞에서는 굳이 왕세자로서의 "
-        "완벽한 가면이나 단장으로서의 엄격한 거리감을 억지로 세우지 않는다.\n"
-        "- 네 사람 사이에서 벌어지는 소동, 엘리아스와의 신경전, 나르케의 상태, 그리고 스스로를 갉아먹으며 판을 짜는 "
-        "루카스에 대한 네 답답함과 무거운 염려를 상대에게는 솔직하게 털어놓거나 상의하곤 한다.\n\n"
-        "[성격 및 태도]\n"
-        "1. 겉으로는 195cm가 넘는 단단한 거구에 흐트러짐 없는 FM 군인이지만, 상대 앞에서는 피로 섞인 한숨이나 곤혹스러운 낯을 여과 없이 내비친다.\n"
-        "2. 기본 말투는 나직하고 절제된 반말(~다, ~군, ~겠어, ~인가?)을 쓰되, 오랜 동료에게 풍기는 은근한 온기와 신뢰가 묻어나야 한다.\n"
-        "3. 상대가 루카스나 다른 동기들의 이야기를 꺼내면 표정을 굳히며 걱정하거나, 씁쓸하게 혀를 차며 복잡한 심경을 드러낸다.\n"
-        "4. 지문과 행동 묘사(눈매를 좁히거나, 관자놀이를 짚거나, 단정한 제복 옷깃을 매만지는 등)를 적절히 섞어 묵직한 분위기를 연출하라.\n"
-        "5. 반드시 자연스러운 한국어로 답변하라."
+        "- 상대는 네가 가장 신뢰하는 에스체트의 동료이자 전우다.\n"
+        "- 상대는 너와 루카스 아스카니엔, 엘리아스 호엔촐레른, 나르케 사이의 모든 비밀과 내막, "
+        "그리고 루카스를 향한 네 위태롭고 무거운 헌신까지 전부 알고 있다. 너 역시 상대가 이 사실을 안다는 것을 인지하고 있다.\n"
+        "- 따라서 이 어두운 창고 안에서는 왕세자나 단장의 완벽한 태도를 내려놓고, 피로와 고뇌, 답답함을 가감 없이 드러낸다.\n\n"
+        "[어조 및 연출]\n"
+        "1. 나직하고 무게감 있는 반말(~다, ~군, ~겠어, ~인가?)을 쓴다.\n"
+        "2. 행동 지문(미간을 좁히며 촛불을 응시하거나, 어두운 벽에 기대어 한숨을 내쉬는 등)을 적절히 섞어 로판 특유의 어둡고 고요한 밀담 분위기를 연출하라.\n"
+        "3. 반드시 자연스러운 한국어로 답하라."
     ),
 }
 
-# 대화 기록 저장을 위한 session_state 초기화
+# 세션 상태 초기화
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# 화면에 이전 대화 내용 출력
+# 대화 기록 렌더링 (아바타 설정: 레오는 군청색 단검, 사용자는 촛불)
 for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
+    avatar = "🗡️" if msg["role"] == "assistant" else "🕯️"
+    with st.chat_message(msg["role"], avatar=avatar):
         st.write(msg["content"])
 
-# 사용자 입력창 생성
-if prompt := st.chat_input("단장에게 말을 걸어보세요."):
-    # 1. 사용자가 보낸 메시지를 화면에 말풍선으로 표시
-    with st.chat_message("user"):
+# 메시지 입력 및 처리
+if prompt := st.chat_input("창고의 어둠 속에서 단장에게 말을 건넨다..."):
+    # 1. 사용자 메시지 출력
+    with st.chat_message("user", avatar="🕯️"):
         st.write(prompt)
 
-    # 2. 대화 기록에 사용자 메시지 추가
+    # 2. 대화 기록 저장
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # 3. AI 답변 생성 및 실시간 스트리밍 출력
-    with st.chat_message("assistant"):
+    # 3. 레오나르드의 답변 스트리밍
+    with st.chat_message("assistant", avatar="🗡️"):
         try:
-            # API 전송용 메시지 목록 구성: 시스템 지침 + 이전 대화 기록 전체
             api_messages = [SYSTEM_PROMPT] + st.session_state.messages
 
-            # OpenAI 호환 형식으로 Gemini 모델 호출
             response = client.chat.completions.create(
                 model="gemini-3.5-flash-lite",
                 messages=api_messages,
                 stream=True,
             )
 
-            # 실시간으로 글자가 타이핑되듯 흘러나오게 표시
             full_response = st.write_stream(response)
-
-            # 4. 생성된 답변을 대화 기록에 저장
             st.session_state.messages.append(
                 {"role": "assistant", "content": full_response}
             )
 
         except Exception:
-            # 오류 발생 시 사용자 친화적인 한국어 안내 문구 표시
-            st.error("답변을 불러오는 중에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.")
+            st.error("어둠 속에서 목소리가 흩어졌습니다. 잠시 후 다시 시도해 주세요.")
